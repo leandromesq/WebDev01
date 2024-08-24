@@ -1,58 +1,56 @@
-const { Model, DataTypes } = require("sequelize");
+const {DataTypes } = require("sequelize");
+const sequelize = require('../config/database');
 
-class Endereco extends Model {}
 
-Endereco.init(
-    {
-        Id: {
-            type: DataTypes.INTEGER,
-            primaryKey: true,
-            autoIncrement: true,
-            allowNull: false,
-        },
-
-        Cep: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-
-        Logradouro: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-
-        Numero: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
-
-        Complemento: {
-            type: DataTypes.STRING,
-        },
-
-        Bairro: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        Cidade: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-
-        Estado: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        MunicipioIBGE: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
+const Endereco = sequelize.define( 'Endereco',
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
     },
-    {
-        sequelize,
-        modelName: "Endereco",
-        tableName: "enderecos",
-        timestamps: true,
-    }
+    cep: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+
+    logradouro: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+
+    numero: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+
+    complemento: {
+      type: DataTypes.STRING,
+    },
+
+    bairro: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    cidade: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+
+    estado: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    municipioibge: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+  },
+  {
+    sequelize,
+    modelName: "Endereco",
+    tableName: "enderecos",
+    timestamps: false,
+  }
 );
 module.exports = Endereco;
