@@ -1,47 +1,41 @@
-const {DataTypes } = require("sequelize");
-const sequelize = require('../config/database');
+const { Model, DataTypes, Sequelize } = require("sequelize");
+const sequelize = new Sequelize(
+  "postgres://usuario:senha@localhost:5432/api-node"
+);
 
+class Endereco extends Model {}
 
-const Endereco = sequelize.define( 'Endereco',
+Endereco.init(
   {
-    id: {
+    Id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-    cep: {
+    Cep: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-
-    logradouro: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-
-    numero: {
+    Numero: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-
-    complemento: {
+    Complemento: {
       type: DataTypes.STRING,
     },
-
-    bairro: {
+    Bairro: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    cidade: {
+    Cidade: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-
-    estado: {
+    Estado: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    municipioibge: {
+    MunicipioIBGE: {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -50,7 +44,7 @@ const Endereco = sequelize.define( 'Endereco',
     sequelize,
     modelName: "Endereco",
     tableName: "enderecos",
-    timestamps: false,
+    timestamps: true,
   }
 );
 module.exports = Endereco;
