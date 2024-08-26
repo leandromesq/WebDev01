@@ -1,4 +1,41 @@
-const { Endereco } = require('../models/endereco');
+const { Endereco } = require("../models");
+const axios = require("axios");
+
+//criar endereço a partir de cep
+exports.createEnderecoCep = async (req, res) => {
+  const reqcep = req.params.cep;
+
+  const cepRegex = /^[0-9]{5}-?[0-9]{3}$/;
+
+  if (!cepRegex.test(reqcep)) {
+    res.status(400).send("CEP inválido. Formato: XXXXX-XXX");
+  }
+
+  try {
+    const response = await axios.get(`https://viacep.com.br/ws/${reqcep}/json`);
+    const { cep, logradouro, complemento, bairro, localidade, uf, ibge } =
+      response.data;
+
+    console.log(response.data);
+
+    const novoEndereco = await Endereco.create({
+      Cep: cep,
+      Logradouro: logradouro,
+      Numero: 0,
+      Complemento: complemento,
+      Bairro: bairro,
+      Cidade: localidade,
+      Estado: uf,
+      MunicipioIBGE: ibge,
+    });
+
+    res.status(201).json(novoEndereco);
+  } catch (error) {
+    console.error("Erro ao fazer requisição: ", error);
+    res.status(500).send("Erro ao consultar o CEP");
+  }
+};
+
 // Criação de um novo endereço
 exports.createEndereco = async (req, res) => {
   try {
@@ -14,7 +51,7 @@ exports.createEndereco = async (req, res) => {
     } = req.body;
 
     const novoEndereco = await Endereco.create({
-      Сер,
+      Cep,
       Logradouro,
       Numero,
       Complemento,
@@ -58,21 +95,21 @@ exports.updateEndereco = async (req, res) => {
       MunicipioIBGE,
     } = req.body;
 
-    const enderecos = await Endereco.findByPk(Id);
-    if (!enderecos) {
+    const endereco = await Endereco.findByPk(Id);
+    if (!endereco) {
       return res.status(404).json({ error: "Endereço não encontrado" });
     }
-    enderecos.Cep = Cep;
-    enderecos.Logradouro = Logradouro;
-    enderecos.Numero = Numero;
-    enderecos.Complemento = Complemento;
-    enderecos.Bairro = Bairro;
-    enderecos.Cidade = Cidade;
-    enderecos.Estado = Estado;
-    enderecos.MunicipioIBGE = MunicipioIBGE;
+    endereco.Cep = Cep;
+    endereco.Logradouro = Logradouro;
+    endereco.Numero = Numero;
+    endereco.Complemento = Complemento;
+    endereco.Bairro = Bairro;
+    endereco.Cidade = Cidade;
+    endereco.Estado = Estado;
+    endereco.MunicipioIBGE = MunicipioIBGE;
 
-    await enderecos.save();
-    res.status(200).json(enderecos);
+    await endereco.save();
+    res.status(200).json(endereco);
   } catch (error) {
     res
       .status(500)
@@ -84,31 +121,36 @@ exports.updateEndereco = async (req, res) => {
 exports.deleteEndereco = async (req, res) => {
   try {
     const { Id } = req.params;
-    const enderecos = await Endereco.findByPk(Id);
+    const endereco = await Endereco.findByPk(Id);
 
-    if (!enderecos) {
+    if (!endereco) {
       return res.status(404).json({ error: "Endereço não encontrado" });
     }
 
-    await enderecos.destroy();
-    res.status(204).json();
+    await endereco.destroy();
+    res.status(204).send();
   } catch (error) {
     res
       .status(500)
       .json({ error: "Erro ao deletar endereço", details: error.message });
   }
+};
 
- exports.getEnderecoById = async (req, res) => {
+  // Leitura de um endereço por ID
+  exports.getEnderecoById = async (req, res) => {
     try {
       const { Id } = req.params;
       const endereco = await Endereco.findByPk(Id);
+
       if (!endereco) {
-        return res.status(404).json({ error: 'Endereco not found' });
+        return res.status(404).json({ error: "Endereço não encontrado" });
       }
+
       res.status(200).json(endereco);
     } catch (error) {
-      return res.status(500).json({ error: 'Erro ao buscar endereco', details: error.message });
+      res.status(500).json({
+        error: "Erro ao buscar endereço",
+        details: error.message,
+      });
     }
-  }
-
-};
+  };
